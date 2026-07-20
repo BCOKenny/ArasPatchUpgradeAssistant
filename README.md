@@ -1,5 +1,11 @@
 # Aras Innovator Patches 升級助手
 
+## 文件分工
+
+- Requirement: Chat 討論後的需求交接，主文件為 `docs/00_Requirement_Handoff.md`。
+- Spec: Work 階段的專案規格，主文件為 `docs/10_Spec.md`。
+- FunctionSpec: Codex 實作依據，主文件為 `docs/20_FunctionSpec.md`。
+
 `ArasPatchUpgradeAssistant` 是 .NET 8 WPF 桌面工具，用來輔助 Aras Innovator Patches 升級前的設定與檢查。
 
 目前版本仍是前置輔助工具，不會執行任何 BAT / CMD / SQL 升級命令，也不會測試 PLM 或資料庫連線。
