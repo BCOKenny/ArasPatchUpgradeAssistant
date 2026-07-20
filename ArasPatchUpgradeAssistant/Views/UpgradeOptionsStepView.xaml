@@ -1,0 +1,478 @@
+<UserControl x:Class="ArasPatchUpgradeAssistant.Views.UpgradeOptionsStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:ArasPatchUpgradeAssistant.Helpers">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0">
+            <StackPanel>
+                <TextBlock Text="升級選項 / BAT 執行計畫"
+                           FontSize="26"
+                           FontWeight="SemiBold"
+                           Foreground="#182230" />
+                <TextBlock Text="依據第一步的 SETUP CMD 所在 commands 目錄，掃描可納入升級計畫的數字前綴 BAT 檔案。"
+                           Foreground="#667085"
+                           Margin="0,5,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <Border Grid.Row="1"
+                Background="White"
+                BorderBrush="#E0E5EC"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="0,18,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,16,10">
+                    <TextBlock Text="commands 目錄" Foreground="#667085" />
+                    <TextBlock Text="{Binding CommandsDirectory}"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,10">
+                    <TextBlock Text="Command Folder" Foreground="#667085" />
+                    <TextBlock Text="{Binding CommandFolder}"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,16,10">
+                    <TextBlock Text="Patches Base" Foreground="#667085" />
+                    <TextBlock Text="{Binding PatchesBase}"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,10">
+                    <TextBlock Text="Solutions Base" Foreground="#667085" />
+                    <TextBlock Text="{Binding SolutionsBase}"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,16,0">
+                    <TextBlock Text="commands 目錄檔案數量" Foreground="#667085" />
+                    <TextBlock Text="{Binding CommandsDirectoryFileCount}"
+                               FontWeight="SemiBold"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="可執行升級 BAT" Foreground="#667085" />
+                    <TextBlock Text="{Binding BatFileCount}"
+                               FontWeight="SemiBold"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Expander Grid.Row="2"
+                  Header="AI Patch 中文說明設定"
+                  IsExpanded="False"
+                  Margin="0,0,0,12">
+            <Border Background="White"
+                    BorderBrush="#E0E5EC"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="2"
+                              Content="啟用 AI Patch 中文說明"
+                              IsChecked="{Binding EnableAiPatchDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              VerticalAlignment="Center"
+                              Margin="0,0,12,10" />
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="2"
+                              Grid.ColumnSpan="2"
+                              Content="啟用 AI Request Debug Log"
+                              IsChecked="{Binding EnableAiRequestDebugLog, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              VerticalAlignment="Center"
+                              Margin="0,0,0,10" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Base URL"
+                               VerticalAlignment="Center"
+                               Foreground="#667085"
+                               Margin="0,0,8,8" />
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                             Text="{Binding OpenAiBaseUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,12,8" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="2"
+                               Text="Model"
+                               VerticalAlignment="Center"
+                               Foreground="#667085"
+                               Margin="0,0,8,8" />
+                    <TextBox Grid.Row="1" Grid.Column="3"
+                             Text="{Binding OpenAiModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,0,8" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0"
+                               Text="API Key"
+                               VerticalAlignment="Center"
+                               Foreground="#667085"
+                               Margin="0,0,8,8" />
+                    <PasswordBox Grid.Row="2" Grid.Column="1"
+                                 helpers:PasswordBoxAssistant.BindPassword="True"
+                                 helpers:PasswordBoxAssistant.BoundPassword="{Binding OpenAiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,12,8" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="2"
+                               Text="Timeout / Body 行數"
+                               VerticalAlignment="Center"
+                               Foreground="#667085"
+                               Margin="0,0,8,8" />
+                    <StackPanel Grid.Row="2" Grid.Column="3"
+                                Orientation="Horizontal"
+                                Margin="0,0,0,8">
+                        <TextBox Text="{Binding RequestTimeoutSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="70"
+                                 Margin="0,0,8,0" />
+                        <TextBox Text="{Binding MaxBodyPreviewLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="70" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0"
+                               Text="設定檔"
+                               VerticalAlignment="Center"
+                               Foreground="#667085"
+                               Margin="0,0,8,0" />
+                    <TextBlock Grid.Row="3" Grid.Column="1"
+                               Grid.ColumnSpan="2"
+                               Text="{Binding AiSettingsFilePath}"
+                               TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0" />
+                    <Button Grid.Row="3" Grid.Column="3"
+                            Content="儲存設定"
+                            Command="{Binding SaveAiSettingsCommand}"
+                            HorizontalAlignment="Right"
+                            Padding="14,7" />
+                </Grid>
+            </Border>
+        </Expander>
+
+        <Border Grid.Row="3"
+                Background="White"
+                BorderBrush="#E0E5EC"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="重新掃描"
+                        Command="{Binding RefreshCommand}"
+                        Padding="14,8"
+                        Margin="0,0,8,0" />
+                <Button Content="全選"
+                        Command="{Binding SelectAllCommand}"
+                        Padding="14,8"
+                        Margin="0,0,8,0" />
+                <Button Content="全不選"
+                        Command="{Binding DeselectAllCommand}"
+                        Padding="14,8"
+                        Margin="0,0,8,0" />
+                <Button Content="展開全部"
+                        Command="{Binding ExpandAllCommand}"
+                        Padding="14,8"
+                        Margin="0,0,8,0" />
+                <Button Content="收合全部"
+                        Command="{Binding CollapseAllCommand}"
+                        Padding="14,8" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="4"
+                Background="White"
+                BorderBrush="#E0E5EC"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="1">
+            <DataGrid ItemsSource="{Binding BatFiles}"
+                      Tag="{Binding}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      BorderThickness="0"
+                      RowHeight="40"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Tag"
+                                Value="{Binding Tag, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                        <Setter Property="DetailsVisibility"
+                                Value="{Binding IsExpanded, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="插入目前所選項目前的修正"
+                                              Command="{Binding PlacementTarget.Tag.InsertExternalBatItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                    <Separator />
+                                    <MenuItem Header="刪除外部修正"
+                                              Command="{Binding PlacementTarget.Tag.DeleteExternalBatItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                    <MenuItem Header="上移外部修正"
+                                              Command="{Binding PlacementTarget.Tag.MoveExternalBatItemUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                    <MenuItem Header="下移外部修正"
+                                              Command="{Binding PlacementTarget.Tag.MoveExternalBatItemDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E0E5EC"
+                                BorderThickness="0,1,0,1"
+                                Padding="42,8,8,8"
+                                HorizontalAlignment="Stretch">
+                            <DataGrid ItemsSource="{Binding Updates}"
+                                      Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Stretch"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      BorderThickness="0"
+                                      RowHeight="34"
+                                      MinHeight="40"
+                                      MaxHeight="360"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      ScrollViewer.CanContentScroll="True">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Tag"
+                                                Value="{Binding Tag, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                                        <Setter Property="ToolTip"
+                                                Value="{Binding PatchNoteToolTip}" />
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu>
+                                                    <MenuItem Header="插入目前所選項目前的修正"
+                                                              Command="{Binding PlacementTarget.Tag.InsertExternalUpdateItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    <MenuItem Header="產生 Patch 說明"
+                                                              Command="{Binding PlacementTarget.Tag.GeneratePatchNoteCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    <Separator />
+                                                    <MenuItem Header="刪除外部修正"
+                                                              Command="{Binding PlacementTarget.Tag.DeleteExternalUpdateItemCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    <MenuItem Header="上移外部修正"
+                                                              Command="{Binding PlacementTarget.Tag.MoveExternalUpdateItemUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    <MenuItem Header="下移外部修正"
+                                                              Command="{Binding PlacementTarget.Tag.MoveExternalUpdateItemDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="40">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="說明" Width="52"
+                                                            IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding PatchNoteIcon}"
+                                                           ToolTip="{Binding PatchNoteToolTip}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="15">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#98A2B3" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPatchNoteGenerated}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#1570EF" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsPatchNoteAiFallback}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#DC6803" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="UpNumber"
+                                                        Binding="{Binding UpNumber}"
+                                                        IsReadOnly="True"
+                                                        Width="2*"
+                                                        MinWidth="120" />
+                                    <DataGridTextColumn Header="Name"
+                                                        Binding="{Binding Name}"
+                                                        IsReadOnly="True"
+                                                        Width="4*"
+                                                        MinWidth="260" />
+                                    <DataGridTextColumn Header="Order"
+                                                        Binding="{Binding Order}"
+                                                        IsReadOnly="True"
+                                                        Width="60" />
+                                    <DataGridTextColumn Header="Generation"
+                                                        Binding="{Binding Generation}"
+                                                        IsReadOnly="True"
+                                                        Width="80" />
+                                    <DataGridTextColumn Header="SoftwareVersion"
+                                                        Binding="{Binding SoftwareVersion}"
+                                                        IsReadOnly="True"
+                                                        Width="100" />
+                                    <DataGridTextColumn Header="DbTargetVersion"
+                                                        Binding="{Binding DbTargetVersion}"
+                                                        IsReadOnly="True"
+                                                        Width="110" />
+                                    <DataGridTextColumn Header="Source"
+                                                        Binding="{Binding Source}"
+                                                        IsReadOnly="True"
+                                                        Width="90" />
+                                    <DataGridTextColumn Header="Status"
+                                                        Binding="{Binding Status}"
+                                                        IsReadOnly="True"
+                                                        Width="90" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="" Width="32">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding ToggleExpandedCommand}"
+                                        Visibility="{Binding HasChildren, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Width="24"
+                                        Height="24"
+                                        Padding="0"
+                                        BorderThickness="0"
+                                        Background="Transparent"
+                                        Foreground="#475467"
+                                        Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Content" Value="▶" />
+                                            <Setter Property="ToolTip" Value="展開子項目" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                                    <Setter Property="Content" Value="▼" />
+                                                    <Setter Property="ToolTip" Value="收合子項目" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="" Width="40">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsThreeState="True"
+                                          IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="順序"
+                                        Binding="{Binding Order}"
+                                        IsReadOnly="True"
+                                        Width="60" />
+                    <DataGridTextColumn Header="BAT 檔名"
+                                        Binding="{Binding FileName}"
+                                        IsReadOnly="True"
+                                        Width="2*"
+                                        MinWidth="220" />
+                    <DataGridTextColumn Header="類型"
+                                        Binding="{Binding Type}"
+                                        IsReadOnly="True"
+                                        Width="110" />
+                    <DataGridTextColumn Header="狀態"
+                                        Binding="{Binding Status}"
+                                        IsReadOnly="True"
+                                        Width="120" />
+                    <DataGridTextColumn Header="子項目數量"
+                                        Binding="{Binding ChildItemCount}"
+                                        IsReadOnly="True"
+                                        Width="100" />
+                    <DataGridTextColumn Header="Catalog Path"
+                                        Binding="{Binding CatalogPath}"
+                                        IsReadOnly="True"
+                                        Width="3*"
+                                        MinWidth="260" />
+                    <DataGridTextColumn Header="訊息"
+                                        Binding="{Binding Message}"
+                                        IsReadOnly="True"
+                                        Width="2*"
+                                        MinWidth="180" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <TextBlock Grid.Row="5"
+                   Text="{Binding StatusMessage}"
+                   Foreground="#667085"
+                   Margin="4,10,0,0" />
+    </Grid>
+</UserControl>

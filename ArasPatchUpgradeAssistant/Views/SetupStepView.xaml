@@ -1,0 +1,275 @@
+<UserControl x:Class="ArasPatchUpgradeAssistant.Views.SetupStepView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:ArasPatchUpgradeAssistant.Helpers">
+    <UserControl.Resources>
+        <Style x:Key="SectionBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="BorderBrush" Value="#E0E5EC" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="BorderBrush" Value="#C9D2DE" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="7,5" />
+        </Style>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#344054" />
+            <Setter Property="Margin" Value="0,0,0,5" />
+        </Style>
+        <Style x:Key="SectionExpanderStyle" TargetType="Expander">
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="980" HorizontalAlignment="Stretch">
+            <TextBlock Text="基本設定 / 產生 SETUP CMD"
+                       FontSize="26"
+                       FontWeight="SemiBold"
+                       Foreground="#182230" />
+            <TextBlock Text="選取升級設定來源，確認預覽後建立此電腦專用的 SETUP CMD。"
+                       Foreground="#667085"
+                       Margin="0,5,0,12" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,12">
+                <Button Content="全部展開"
+                        Command="{Binding ExpandAllSectionsCommand}"
+                        Padding="14,7"
+                        Margin="0,0,8,0" />
+                <Button Content="全部收合"
+                        Command="{Binding CollapseAllSectionsCommand}"
+                        Padding="14,7" />
+            </StackPanel>
+
+            <Expander Header="1. SETUP CMD 與升級路徑"
+                      Style="{StaticResource SectionExpanderStyle}"
+                      IsExpanded="{Binding IsSetupPathSectionExpanded}">
+                <Border Style="{StaticResource SectionBorderStyle}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding SetupCmdPath, Mode=OneWay}" IsReadOnly="True" />
+                            <Button Grid.Column="1"
+                                    Content="瀏覽..."
+                                    Command="{Binding BrowseSetupCommand}"
+                                    Padding="16,7"
+                                    Margin="8,0,0,0" />
+                        </Grid>
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="版本" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding Version, Mode=OneWay}" IsReadOnly="True" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                <TextBlock Text="版本代碼" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding VersionCode, Mode=OneWay}" IsReadOnly="True" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Command Folder" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding CommandFolder, Mode=OneWay}" IsReadOnly="True" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Text="Upgrade Root" Style="{StaticResource LabelStyle}" Margin="0,14,0,5" />
+                        <TextBox Text="{Binding UpgradeRoot, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="Support Root" Style="{StaticResource LabelStyle}" Margin="0,10,0,5" />
+                        <TextBox Text="{Binding SupportRoot, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="已選取的 SETUP-DEFAULTS-MACHINENAME.CMD 完整路徑"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,10,0,5" />
+                        <TextBox Text="{Binding ReferencePath, Mode=OneWay}" IsReadOnly="True" />
+                    </StackPanel>
+                </Border>
+            </Expander>
+
+            <Expander Header="2. Innovator Server 與登入資訊"
+                      Style="{StaticResource SectionExpanderStyle}"
+                      IsExpanded="{Binding IsInnovatorSectionExpanded}">
+                <Border Style="{StaticResource SectionBorderStyle}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding InnovatorConfigPath, Mode=OneWay}" IsReadOnly="True" />
+                            <Button Grid.Column="1"
+                                    Content="瀏覽..."
+                                    Command="{Binding BrowseInnovatorConfigCommand}"
+                                    Padding="16,7"
+                                    Margin="8,0,0,0" />
+                        </Grid>
+                        <TextBlock Text="AP Server Root" Style="{StaticResource LabelStyle}" Margin="0,14,0,5" />
+                        <TextBox Text="{Binding ApServerRoot, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="vault.config 路徑"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,10,0,5" />
+                        <TextBox Text="{Binding VaultConfigPath, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="Web URL / AMLRUN_SERVERPREFIX"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,10,0,5" />
+                        <TextBox Text="{Binding ServerPrefix, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="settings.json 儲存位置"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,10,0,5" />
+                        <TextBox Text="{Binding SettingsFilePath, Mode=OneWay}" IsReadOnly="True" />
+                        <TextBlock Text="Log 檔案目錄"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,10,0,5" />
+                        <TextBox Text="{Binding LogDirectory, Mode=OneWay}" IsReadOnly="True" />
+
+                        <TextBlock Text="資料庫連線" Style="{StaticResource LabelStyle}" Margin="0,14,0,5" />
+                        <ComboBox ItemsSource="{Binding DatabaseConnections}"
+                                  SelectedItem="{Binding SelectedConnection}"
+                                  DisplayMemberPath="Label" />
+
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="SQL Server" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding SelectedSqlServer, Mode=OneWay}" IsReadOnly="True" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="目標資料庫（COPY_TARGET_DB_NAME）" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding SelectedDatabaseName, Mode=OneWay}" IsReadOnly="True" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="來源資料庫（COPY_SOURCE_DB_NAME）"
+                                   Style="{StaticResource LabelStyle}"
+                                   Margin="0,14,0,5" />
+                        <TextBox Text="{Binding CopySourceDbName, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="使用者名稱" Style="{StaticResource LabelStyle}" />
+                                <TextBox Text="{Binding LoginName, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="密碼" Style="{StaticResource LabelStyle}" />
+                                <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
+                                             helpers:PasswordBoxAssistant.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Padding="8,6" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Expander>
+
+            <Expander Header="3. SQL Server 登入資訊"
+                      Style="{StaticResource SectionExpanderStyle}"
+                      IsExpanded="{Binding IsSqlLoginSectionExpanded}">
+                <Border Style="{StaticResource SectionBorderStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="SQL 登入名稱" Style="{StaticResource LabelStyle}" />
+                            <TextBox Text="{Binding SqlLoginName, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="SQL 密碼" Style="{StaticResource LabelStyle}" />
+                            <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
+                                         helpers:PasswordBoxAssistant.BoundPassword="{Binding SqlPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Padding="8,6" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Expander>
+
+            <Expander Header="4. 寫入預覽"
+                      Style="{StaticResource SectionExpanderStyle}"
+                      IsExpanded="{Binding IsPreviewSectionExpanded}">
+                <Border Style="{StaticResource SectionBorderStyle}">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <TextBlock Text="寫入預覽"
+                                       FontSize="17"
+                                       FontWeight="SemiBold" />
+                            <TextBlock DockPanel.Dock="Right"
+                                       Text="{Binding MaskedPassword, StringFormat=密碼：{0}}"
+                                       Foreground="#667085" />
+                        </DockPanel>
+                        <DataGrid ItemsSource="{Binding VariablePreview}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  MaxHeight="250">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="變數" Binding="{Binding Name}" Width="200" />
+                                <DataGridTextColumn Header="原始值" Binding="{Binding OriginalValue}" Width="*" />
+                                <DataGridTextColumn Header="寫入值" Binding="{Binding Value}" Width="*" />
+                                <DataGridTextColumn Header="狀態" Binding="{Binding Status}" Width="90" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Text="{Binding PreviewWarningMessage}"
+                                   Foreground="#B54708"
+                                   TextWrapping="Wrap"
+                                   Margin="0,8,0,0" />
+                        <Button Content="確認並產生 SETUP CMD"
+                                Command="{Binding GenerateCommand}"
+                                HorizontalAlignment="Right"
+                                Background="#1570EF"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="22,10"
+                                Margin="0,14,0,0"
+                                FontWeight="SemiBold" />
+                    </StackPanel>
+                </Border>
+            </Expander>
+
+            <Expander Header="5. 產生結果 / 訊息"
+                      Style="{StaticResource SectionExpanderStyle}"
+                      IsExpanded="{Binding IsResultSectionExpanded}">
+                <Border Style="{StaticResource SectionBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="產生路徑"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10" />
+                        <TextBox Text="{Binding GeneratedTargetPath, Mode=OneWay}" IsReadOnly="True" />
+                        <DataGrid ItemsSource="{Binding GenerationChanges}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  Margin="0,10,0,0"
+                                  MaxHeight="230">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="變數" Binding="{Binding Name}" Width="190" />
+                                <DataGridTextColumn Header="動作" Binding="{Binding Action}" Width="70" />
+                                <DataGridTextColumn Header="原值" Binding="{Binding OldValue}" Width="*" />
+                                <DataGridTextColumn Header="新值" Binding="{Binding NewValue}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </Expander>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

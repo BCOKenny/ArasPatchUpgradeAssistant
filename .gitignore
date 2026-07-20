@@ -1,0 +1,38 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+
+# Logs
+*.log
+logs/
+
+# Local settings
+settings.json
+ai-settings.json
+appsettings.Development.json
+.env
+*.secret.json
+
+# ArasPatchUpgradeAssistant local generated files
+**/UpgradeAssistant/external-files/
+**/UpgradeAssistant/patch-notes/
+**/UpgradeAssistant/upgrade-plan.json
+
+# Upgrade package generated / runtime files
+**/SETUP-DEFAULTS-*.CMD
+!**/SETUP-DEFAULTS-MACHINENAME.CMD
+
+# Customer data, generated upgrade packages, backups, and DB dumps
+*.zip
+*.7z
+*.rar
+*.bak
+*.bacpac
+*.dacpac
+*.dump
+*.dmp
+*.backup
