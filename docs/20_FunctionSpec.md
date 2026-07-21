@@ -1,4 +1,4 @@
-# ArasPatchUpgradeAssistant FunctionSpec.md
+# ArasPatchUpgradeAssistant 20_FunctionSpec.md
 
 > 文件定位：功能細項規格與 Codex 實作依據。Codex 每次只讀本次任務相關章節，不應一次實作整份文件。
 
@@ -138,7 +138,14 @@ Missing Folder 顯示建立資料夾圖示，Tooltip「建立資料夾」。File
 CORE+PRE → CORE PRE；CORE+POST → CORE POST；PE+PRE → PE PRE；PE+POST → PE POST；其他 BAT。
 
 ### Catalog XML
-依 PatchesBase 尋找 pre/post XML，支援 `pre-patches.xml`、`pre_patches.xml`、manifest、post variants。
+依 PatchesBase 尋找 pre/post XML：
+- CORE PRE → `{PatchesBase}\core\pre-patches.xml`
+- CORE POST → `{PatchesBase}\core\post-patches.xml`
+- PE PRE → `{PatchesBase}\PE\pre-patches.xml`
+- PE POST → `{PatchesBase}\PE\post-patches.xml`
+
+PRE 命名候選：`pre-patches.xml`、`pre_patches.xml`、`pre-patches.manifest.xml`。
+POST 命名候選：`post-patches.xml`、`post_patches.xml`、`post-patches.manifest.xml`。
 
 ### Catalog update
 解析 UpNumber、Name、Order、Generation、SoftwareVersion、DbTargetVersion、Source=Official、Status。
@@ -188,6 +195,54 @@ Source=External 時：
 ### 7.5 Markdown 區塊
 包含 Patch 基本資訊、原始 Description、中文說明、中文摘要、影響範圍、風險提示、Patch XML 解析資訊、靜態分析摘要、AI 產生狀態。
 
+### 7.6 單筆產生後狀態刷新
+單筆 Patch 說明產生流程需回傳 MarkdownPath、GeneratedAt、AiStatus、SourceMode、IsFallback、FallbackReason、ErrorMessage、中文說明、中文摘要、影響範圍、風險提示。
+
+右鍵產生完成後，直接更新同一個 update 子項 ViewModel：
+- HasPatchNote
+- PatchNotePath
+- PatchNoteGeneratedAt
+- PatchNoteAiStatus
+- PatchNoteSourceMode
+- PatchNoteIsFallback
+- PatchNoteErrorMessage
+- PatchNoteIcon
+- PatchNoteToolTip
+- PatchNotePreviewDescription
+- PatchNotePreviewSummary
+- PatchNotePreviewImpact
+- PatchNotePreviewRisk
+
+成功產生 Markdown 時 HasPatchNote=true。AI fallback / error 但 Markdown 已產生時，圖示顯示 fallback 狀態，不視為整體產生失敗。檔案寫入失敗或 Markdown 未產生時才顯示產生失敗狀態。不得要求使用者重新掃描、重新載入或重新展開 BAT。
+
+### 7.7 產生全部 Patch 說明
+第 3 步工具列新增 `GenerateAllPatchNotesCommand`，位置在展開全部 / 收合全部旁。
+
+批量範圍：
+- 以目前第 3 步掃描結果中的官方 update 子項為 UI 更新對象。
+- Catalog 來源依 PatchesBase 讀取 CORE PRE、CORE POST、PE PRE、PE POST。
+- Catalog 檔名支援 `pre-patches.xml`、`pre_patches.xml`、`pre-patches.manifest.xml`、`post-patches.xml`、`post_patches.xml`、`post-patches.manifest.xml`。
+- 外部修正不列入「產生全部 Patch 說明」第一版範圍。
+
+批量規則：
+- 預設只產生尚未存在的 Markdown。
+- 若目標 `.md` 已存在，跳過該項，不呼叫 AI。
+- 逐筆 await 產生，不平行大量呼叫 AI。
+- AI 失敗時仍產生 fallback Markdown，記錄 fallback 狀態並繼續下一筆。
+- 每筆完成、跳過、fallback 或失敗後，立即更新對應 update 子項狀態。
+- 未來可再加 ForceRegenerate 選項，第一版不預設啟用。
+
+批量進度 ViewModel 建議欄位：
+- IsGeneratingAllPatchNotes
+- PatchNoteBatchTotal
+- PatchNoteBatchCurrentIndex
+- PatchNoteBatchSuccessCount
+- PatchNoteBatchSkippedCount
+- PatchNoteBatchFallbackCount
+- PatchNoteBatchFailedCount
+- PatchNoteBatchCurrentItemName
+- PatchNoteBatchProgressText
+
 ## 8. AI Patch 中文說明
 
 ### 8.1 ai-settings.json
@@ -228,9 +283,9 @@ Request 前記錄 BaseUrl、Model、Endpoint、EnableAiPatchDescription、Source
 
 Debug Log 預設 false；true 時 prompt preview 最多 1500 字。
 
-## 9. Patch 說明 ToolTip
+## 9. Patch 說明 ToolTip / 預覽
 
-子項 ViewModel 建議欄位：HasPatchNote、PatchNotePath、PatchNoteGeneratedAt、PatchNoteAiStatus、PatchNoteSourceMode、PatchNoteErrorMessage、PatchNoteIcon、PatchNoteToolTip。
+子項 ViewModel 建議欄位：HasPatchNote、PatchNotePath、PatchNoteGeneratedAt、PatchNoteAiStatus、PatchNoteSourceMode、PatchNoteIsFallback、PatchNoteErrorMessage、PatchNoteIcon、PatchNoteToolTip、PatchNotePreviewDescription、PatchNotePreviewSummary、PatchNotePreviewImpact、PatchNotePreviewRisk。
 
 圖示：
 - 未產生：空白 / 灰色
@@ -238,7 +293,18 @@ Debug Log 預設 false；true 時 prompt preview 最多 1500 字。
 - AI fallback / error：⚠️
 - 產生失敗：❌
 
-重新載入第 3 步時，檢查對應 Markdown 是否存在，若存在即顯示已產生。
+Hover 行為：
+- 滑鼠移到說明圖示時，只顯示簡短 ToolTip。
+- ToolTip 顯示 Markdown 路徑、AI 狀態、說明來源、產生時間、fallback 原因或錯誤摘要。
+
+Click 行為：
+- 點選說明圖示時，顯示輕量中文說明浮動提示卡。
+- 浮動提示卡內容包含中文說明、中文摘要、影響範圍、風險提示、Markdown 檔案路徑。
+- 浮動提示卡 Fade In，顯示約 10 秒後 Fade Out 並自動關閉。
+- 若使用者點選另一個說明圖示，浮動提示卡改顯示新項目內容並重新計時。
+- 不使用 hover 自動彈出完整內容，避免 DataGrid 滑鼠移動誤觸。
+
+重新載入第 3 步時，檢查對應 Markdown 是否存在，若存在即顯示已產生。點擊預覽內容可優先使用 ViewModel 快取欄位；若快取不存在，可從 Markdown 既有區塊讀取。讀取失敗時不得中斷 UI，改顯示「待人工確認」或無法讀取摘要。
 
 ## 10. Serilog
 
@@ -253,9 +319,9 @@ Debug Log 預設 false；true 時 prompt preview 最多 1500 字。
 ## 11. AGENTS.md 需求
 
 AGENTS.md 應指定 canonical docs：
-- `docs/Requirement.md`
-- `docs/Spec.md`
-- `docs/FunctionSpec.md`
+- `docs/00_Requirement_Handoff.md`
+- `docs/10_Spec.md`
+- `docs/20_FunctionSpec.md`
 
 並說明 `docs/superpowers/plans`、`docs/superpowers/specs` 為歷史 / task-level 參考，不是最新 canonical 文件，除非任務明確指定。
 
@@ -266,6 +332,8 @@ AGENTS.md 應指定 canonical docs：
 - 第 3 步只列數字 BAT，Catalog 解析與三態勾選正確。
 - 外部修正可插入、刪除、移動、保存、還原。
 - 官方 update 與外部修正可產生 Patch 說明。
+- 單筆 Patch 說明產生後，row 圖示、ToolTip、Markdown path、AI 狀態與 fallback 狀態立即更新。
 - AI DescriptionOnly 時 BodyIncluded=false。
 - API 失敗有安全 Log 並 fallback。
-- Tooltip 可顯示 Patch 說明狀態。
+- Tooltip 可顯示 Patch 說明狀態，點選圖示可顯示中文說明浮動提示卡。
+- 第 3 步可批量產生尚未存在的官方 Patch 說明，已存在 Markdown 會跳過，AI 失敗仍產生 fallback Markdown 並繼續整批。

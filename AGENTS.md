@@ -25,7 +25,7 @@ Roles:
 - `docs/10_Spec.md`: Project specification for the Work stage.
 - `docs/20_FunctionSpec.md`: Function-level implementation reference for Codex.
 
-Legacy or alternate names such as `docs/Requirement.md`, `docs/Spec.md`, and `docs/FunctionSpec.md` may exist as reference copies, but the numbered files above are the current canonical docs unless the user explicitly says otherwise.
+Use the numbered files above as the canonical docs. Do not recreate unnumbered legacy copies unless the user explicitly asks for them.
 
 Documents under `docs/superpowers/plans/` or `docs/superpowers/specs/` are historical or task-level references. They are not the latest main specification unless the user explicitly names them as the source for the current task.
 

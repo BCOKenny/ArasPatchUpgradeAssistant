@@ -1,6 +1,6 @@
-# ArasPatchUpgradeAssistant Spec.md
+# ArasPatchUpgradeAssistant 10_Spec.md
 
-> 文件定位：Work 產出的正式專案規格書。描述背景、目標、範圍、資料來源、輸出位置、整體架構與高階驗收。功能細節請見 `FunctionSpec.md`。
+> 文件定位：Work 產出的正式專案規格書。描述背景、目標、範圍、資料來源、輸出位置、整體架構與高階驗收。功能細節請見 `20_FunctionSpec.md`。
 
 ## 1. 專案資訊
 
@@ -30,13 +30,15 @@ Aras Innovator 升級常需操作 Support commands，例如 `Support\commands\Up
 10. 產生 Patch 說明 Markdown。
 11. 支援 AI 產生中文說明。
 12. 以 ToolTip 顯示 Patch 說明狀態。
-13. 保存 settings、ai-settings、upgrade-plan。
-14. 後續延伸執行前檢查、執行升級、Log / Report。
+13. 點擊說明圖示顯示中文說明浮動提示。
+14. 支援第 3 步批量產生全部 Patch 說明。
+15. 保存 settings、ai-settings、upgrade-plan。
+16. 後續延伸執行前檢查、執行升級、Log / Report。
 
 ## 4. Chat / Work / Codex 分工
 
-- Chat：需求釐清、問題分析、決策整理，輸出 `Requirement.md`。
-- Work：正式規格、測試計畫、實作計畫與 Codex Prompt，輸出 `Spec.md`、`FunctionSpec.md` 等。
+- Chat：需求釐清、問題分析、決策整理，輸出 `00_Requirement_Handoff.md`。
+- Work：正式規格、測試計畫、實作計畫與 Codex Prompt，輸出 `10_Spec.md`、`20_FunctionSpec.md` 等。
 - Codex：依文件小範圍實作，遵守 `AGENTS.md`，完成後回報修改與驗證結果。
 
 ## 5. 範圍
@@ -49,6 +51,8 @@ Aras Innovator 升級常需操作 Support commands，例如 `Support\commands\Up
 - Patch 說明產生
 - AI Patch 中文說明
 - Patch 說明狀態 ToolTip
+- Patch 說明點擊預覽浮動提示
+- 批量產生全部 Patch 說明
 
 ### 後續範圍
 - 第 4 步：執行前檢查
@@ -86,6 +90,8 @@ Aras Innovator 升級常需操作 Support commands，例如 `Support\commands\Up
  → 產生 Patch 說明
  → 可選 AI 中文說明
  → 顯示 ToolTip 狀態
+ → 點擊圖示預覽中文說明
+ → 可批量產生尚缺 Patch 說明
  → 保存 settings / ai-settings / upgrade-plan
 ```
 
@@ -126,9 +132,9 @@ Aras Innovator 升級常需操作 Support commands，例如 `Support\commands\Up
 文件建議位置：
 
 ```text
-docs/Requirement.md
-docs/Spec.md
-docs/FunctionSpec.md
+docs/00_Requirement_Handoff.md
+docs/10_Spec.md
+docs/20_FunctionSpec.md
 docs/TestPlan.md
 docs/ImplementationPlan.md
 prompts/CodexPrompt.md
@@ -151,6 +157,7 @@ prompts/50_CodexPrompt.md
 - 外部修正採 overlay。
 - 密碼與 API Key 使用 DPAPI。
 - AI 失敗不影響 Markdown 產生。
+- 批量產生預設跳過已存在 Markdown，逐筆執行，避免重複花 API 費用。
 - Log 不記錄敏感資訊。
 - 第 5 步未實作前不執行升級命令。
 - Codex 一次只做小範圍修改。
@@ -166,7 +173,7 @@ prompts/50_CodexPrompt.md
 | Log | Serilog |
 | 安全 | Windows DPAPI |
 | AI | OpenAI-compatible `/v1/chat/completions` |
-| 主要控制項 | DataGrid、RowDetails、ContextMenu、ToolTip、Expander、PasswordBox |
+| 主要控制項 | DataGrid、RowDetails、ContextMenu、ToolTip、Popup、Button、ProgressBar、Expander、PasswordBox |
 
 ## 12. 建議目錄
 
@@ -175,9 +182,9 @@ ArasPatchUpgradeAssistant/
 ├─ AGENTS.md
 ├─ README.md
 ├─ docs/
-│  ├─ Requirement.md
-│  ├─ Spec.md
-│  ├─ FunctionSpec.md
+│  ├─ 00_Requirement_Handoff.md
+│  ├─ 10_Spec.md
+│  ├─ 20_FunctionSpec.md
 │  ├─ TestPlan.md
 │  ├─ ImplementationPlan.md
 │  └─ ReleaseNote.md
@@ -188,7 +195,23 @@ ArasPatchUpgradeAssistant/
 └─ samples/
 ```
 
-## 13. 高階驗收
+## 13. Patch 說明互動與批量產生
+
+### 13.1 即時狀態更新
+
+右鍵產生單筆 Patch 說明完成後，需立即更新目前 update 子項的說明狀態圖示、ToolTip、Markdown path、AI 狀態、fallback 狀態與產生時間。使用者不需要重新掃描、重新載入或重新展開 BAT。
+
+### 13.2 Hover ToolTip 與點擊預覽
+
+Hover 僅顯示簡短 ToolTip，用於快速查看 Markdown 路徑、AI 狀態、說明來源、產生時間與 fallback 原因。點選說明圖示時才顯示較完整的中文說明浮動提示卡，內容包含中文說明、中文摘要、影響範圍、風險提示與 Markdown 檔案路徑。浮動提示卡需 Fade In，顯示約 10 秒後 Fade Out 並自動關閉。
+
+### 13.3 產生全部 Patch 說明
+
+第 3 步工具列在「展開全部 / 收合全部」旁提供「產生全部 Patch 說明」按鈕。批量產生範圍為 PatchesBase 下的 CORE PRE、CORE POST、PE PRE、PE POST 官方 update，讀取 `core\pre-patches.xml`、`core\post-patches.xml`、`PE\pre-patches.xml`、`PE\post-patches.xml`，並支援 `pre_patches.xml`、`post_patches.xml`、`pre-patches.manifest.xml`、`post-patches.manifest.xml` 命名。
+
+批量產生預設只處理尚未存在 Markdown 的項目；已存在 `.md` 的項目跳過。AI 呼叫需逐筆執行，不平行大量送出。畫面需顯示目前第幾筆 / 總筆數 / 成功 / 跳過 / 失敗；AI 失敗時仍產生 fallback Markdown 並繼續下一筆。未來可延伸「強制重新產生」選項。
+
+## 14. 高階驗收
 
 - 可產生 SETUP CMD。
 - 可解析 vault.config appSettings。
@@ -199,7 +222,9 @@ ArasPatchUpgradeAssistant/
 - 可解析 Catalog update。
 - 可插入外部修正。
 - 可產生 Patch 說明。
+- 產生單筆 Patch 說明完成後，row 狀態立即更新，不需重新掃描。
 - AI 啟用時可產生中文說明，失敗時 fallback。
-- ToolTip 可顯示 Patch 說明狀態。
+- ToolTip 可顯示 Patch 說明狀態，點選圖示可顯示中文說明浮動提示。
+- 可批量產生尚未存在的官方 Patch 說明，已存在 Markdown 會跳過，AI 失敗不會中斷整批。
 - 不執行 BAT / CMD / SQL / AML。
 - 不記錄密碼或 API Key。

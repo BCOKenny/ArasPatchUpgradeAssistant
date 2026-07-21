@@ -1,6 +1,6 @@
-# ArasPatchUpgradeAssistant Requirement.md
+# ArasPatchUpgradeAssistant 00_Requirement_Handoff.md
 
-> 文件定位：Chat → Work 的需求交接文件。不是最終實作規格；用來交給 Work 產生 `Spec.md`、`FunctionSpec.md`、`TestPlan.md` 與 Codex Prompt。
+> 文件定位：Chat → Work 的需求交接文件。不是最終實作規格；用來交給 Work 產生 `10_Spec.md`、`20_FunctionSpec.md`、`TestPlan.md` 與 Codex Prompt。
 
 ## 1. 專案
 | 項目 | 內容 |
@@ -16,11 +16,11 @@
 - 釐清需求、限制、例外與錯誤原因。
 - 討論 Aras Patches、SETUP CMD、vault.config、DB-Connection、Catalog XML、Patch XML。
 - 分析 API / Log / UI 問題。
-- 產出本文件 `Requirement.md` 或 `00_Requirement_Handoff.md`。
+- 產出本文件 `00_Requirement_Handoff.md`。
 
 ### Work
 - 將需求轉成正式文件與可執行計畫。
-- 產出 `Spec.md`、`FunctionSpec.md`、`TestPlan.md`、`ImplementationPlan.md`、`CodexPrompt.md`。
+- 產出 `10_Spec.md`、`20_FunctionSpec.md`、`TestPlan.md`、`ImplementationPlan.md`、`CodexPrompt.md`。
 - 做 Requirement Gap Analysis，確認是否缺少驗收規則或邊界條件。
 - Codex 完成後整理 ChangeLog、ImplementationReport、BuildAndTestResult、ReleaseNote。
 
@@ -40,7 +40,7 @@ Wizard 步驟：
 5. 執行升級命令（後續）
 6. Log / Report 檢視（後續）
 
-目前核心：第 1、2、3 步、外部修正、Patch 說明、AI 中文說明、Patch 說明 ToolTip。
+目前核心：第 1、2、3 步、外部修正、Patch 說明、AI 中文說明、Patch 說明 ToolTip / 點擊預覽、批量產生全部 Patch 說明。
 
 ## 4. 第 1 步需求：基本設定 / 產生 CMD
 
@@ -78,7 +78,7 @@ Wizard 步驟：
 - 顯示 commands 目錄檔案數量與可執行升級 BAT。
 - 判斷 BAT 類型：CORE PRE、CORE POST、PE PRE、PE POST、BAT。
 - 以 PatchesBase 找 Catalog XML。
-- 支援 `pre-patches.xml`、`pre_patches.xml`、manifest 變體。
+- 支援 `pre-patches.xml`、`post-patches.xml`、`pre_patches.xml`、`post_patches.xml`、`pre-patches.manifest.xml`、`post-patches.manifest.xml`。
 - 解析 `<updates><update>` 的 UpNumber、Name、Order、Generation、SoftwareVersion、DbTargetVersion。
 - 父階 BAT 可展開 / 收合。
 - 子階 DataGrid 需有獨立 ScrollBar。
@@ -107,6 +107,7 @@ Wizard 步驟：
 - Patch XML 檔名為 `{Name}.xml`。
 - Markdown 儲存至 `{SupportRoot}\UpgradeAssistant\{CommandFolder}\patch-notes\{BatFileNameWithoutExtension}\{UpNumber}.md`。
 - 找不到 Patch XML 時仍產生 Missing 說明，不中斷。
+- 產生完成後，該 update 子項需立即更新說明狀態圖示、ToolTip、Markdown path、AI 狀態與 fallback 狀態，不要求使用者重新掃描或重新展開。
 
 ### 外部修正
 - 不使用 `{Name}.xml` 尋找。
@@ -125,17 +126,36 @@ Wizard 步驟：
 - Log 需記錄安全診斷資訊：BaseUrl、Model、SourceMode、DescriptionChars、BodyIncluded、PromptChars、RequestJsonChars、HTTP status、error.message/type/code、x-request-id。
 - 不得記錄 API Key、Authorization header、完整 request JSON、完整 Patch Body。
 
-## 10. Patch 說明 ToolTip 需求
+## 10. Patch 說明 ToolTip / 點擊預覽需求
 
 - 子項 DataGrid 增加「說明」狀態欄。
 - 未產生：空白或灰色圖示。
 - 已產生：📝。
 - AI fallback：⚠️。
-- ToolTip 顯示 Markdown 路徑、AI 狀態、說明來源、產生時間、fallback 原因。
-- 產生 Patch 說明後即時更新該子項狀態。
+- 滑鼠移到圖示時只顯示簡短 ToolTip，內容包含 Markdown 路徑、AI 狀態、說明來源、產生時間、fallback 原因。
+- 點選圖示時顯示中文說明浮動提示卡，不只依賴 hover 自動彈出完整內容。
+- 浮動提示卡內容包含中文說明、中文摘要、影響範圍、風險提示、Markdown 檔案路徑。
+- 浮動提示卡動畫：點選後 Fade In，顯示約 10 秒，Fade Out 後自動關閉。
+- 產生 Patch 說明後即時更新該子項狀態，至少包含說明狀態圖示、ToolTip、Markdown path、AI 狀態與 fallback 狀態。
 - 重新載入第 3 步時，若 Markdown 已存在，需自動顯示已產生。
 
-## 11. 安全限制
+## 11. 產生全部 Patch 說明需求
+
+- 第 3 步工具列在「展開全部 / 收合全部」旁新增「產生全部 Patch 說明」按鈕。
+- 批量產生範圍為目前 PatchesBase 可掃描到的官方 update：
+  - CORE PRE：`{PatchesBase}\core\pre-patches.xml`
+  - CORE POST：`{PatchesBase}\core\post-patches.xml`
+  - PE PRE：`{PatchesBase}\PE\pre-patches.xml`
+  - PE POST：`{PatchesBase}\PE\post-patches.xml`
+- 同時支援既有命名：`pre_patches.xml`、`post_patches.xml`、`pre-patches.manifest.xml`、`post-patches.manifest.xml`。
+- 預設只產生尚未存在的 Patch 說明；已存在的 `.md` 預設跳過，避免重複花 API 費用。
+- 未來若需要，可再加「強制重新產生」選項。
+- 批量產生需逐筆執行，不平行大量呼叫 AI。
+- 需顯示進度：目前第幾筆 / 總筆數 / 成功 / 跳過 / 失敗。
+- AI 失敗時仍產生 fallback Markdown，不中斷整批。
+- 每筆完成、跳過或 fallback 後，畫面上對應 update 子項需立即刷新說明狀態。
+
+## 12. 安全限制
 
 - 不自動執行 BAT / CMD / SQL / AML。
 - 不執行 Patch XML Body。
@@ -143,20 +163,21 @@ Wizard 步驟：
 - 密碼與 API Key 不明文保存。
 - Log 不記錄密碼或 API Key 明文。
 
-## 12. 初步驗收
+## 13. 初步驗收
 
 - 可產生 SETUP CMD。
 - 可檢查升級目錄。
 - 可掃描 BAT 與解析 Catalog update。
 - 可插入外部修正並保存 upgrade-plan.json。
 - 可產生官方 update 與外部修正的 Patch 說明。
+- 產生 Patch 說明完成後，該 row 圖示、ToolTip、Markdown path、AI 狀態與 fallback 狀態立即更新。
 - AI 啟用時可呼叫 API；失敗時 fallback。
-- Tooltip 可顯示 Patch 說明狀態。
+- ToolTip 可顯示 Patch 說明狀態，點選圖示可顯示中文說明浮動提示卡。
+- 可從第 3 步批量產生尚未存在的官方 Patch 說明，已存在 Markdown 會跳過，AI 失敗不會中斷整批。
 - 不執行任何升級命令或 SQL。
 
-## 13. 尚未確認
+## 14. 尚未確認
 
 - 第 4 步「執行前檢查」是否優先實作。
-- 是否要批次產生 Patch 說明。
-- ToolTip 是否支援點擊開啟 Markdown。
+- 是否新增「強制重新產生 Patch 說明」選項。
 - 是否建立 TestPlan、ImplementationPlan 與 CodexPrompt。
